@@ -136,8 +136,12 @@ function Register-OfficeTask([string]$name, [string]$cmd, $trigger) {
   Register-ScheduledTask -TaskName $name -Action $action -Trigger $trigger -Settings $settings -Force | Out-Null
   Info "✓ $name"
 }
-Register-OfficeTask "Office-Sync"    "bash ~/.claude-brain/office-sync.sh"              (New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Hours 1) -RepetitionDuration ([TimeSpan]::MaxValue))
-Register-OfficeTask "Office-SyncLogon" "bash ~/.claude-brain/office-sync.sh"            (New-ScheduledTaskTrigger -AtLogOn)
+# 同期は「1 時間毎＋ログオン時」の 2 トリガを持つ 1 タスク（Plan 正本どおり 5 タスク構成・停止も 1 操作）
+$syncTrig = @(
+  (New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Hours 1) -RepetitionDuration ([TimeSpan]::MaxValue)),
+  (New-ScheduledTaskTrigger -AtLogOn)
+)
+Register-OfficeTask "Office-Sync"    "bash ~/.claude-brain/office-sync.sh"              $syncTrig
 Register-OfficeTask "Office-R0"      "bash ~/.claude-brain/transcript-archive-auto.sh"  (New-ScheduledTaskTrigger -Daily -At 09:45)
 Register-OfficeTask "Office-R1"      "bash ~/.claude-brain/transcript-extract-auto.sh"  (New-ScheduledTaskTrigger -Daily -At 11:00)
 Register-OfficeTask "Office-R2"      "bash ~/.claude-brain/transcript-reconcile-auto.sh" (New-ScheduledTaskTrigger -Daily -At 11:30)
