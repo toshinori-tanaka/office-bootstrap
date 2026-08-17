@@ -31,6 +31,9 @@ iwr -UseBasicParsing https://raw.githubusercontent.com/toshinori-tanaka/office-b
 
 3. あとは**画面の日本語案内に従うだけ**です。「ユーザーアカウント制御」の確認が出たら「**はい**」を押してください。
 
+> 必要な道具一式（Windows の Linux 実行環境 WSL2 / Ubuntu / Claude Code / GitHub 接続ツール /
+> AI 拡張の実行基盤 Node.js など）は**すべて自動で導入**されます。事前の準備は不要です。
+
 ### 途中で聞かれること（この順で・すべて画面に説明が出ます）
 
 | 場面 | すること |
@@ -91,7 +94,7 @@ iwr -UseBasicParsing https://raw.githubusercontent.com/toshinori-tanaka/office-b
 > 2. PC の仮想化支援機能（Intel VT-x / AMD-V）の有効化（BIOS/UEFI 設定）
 > 3. 次のドメインへの HTTPS(443) 通信許可:
 >    github.com / *.githubusercontent.com / claude.ai / api.anthropic.com /
->    downloads.claude.ai / registry.npmjs.org / pypi.org
+>    downloads.claude.ai / registry.npmjs.org / pypi.org / deb.nodesource.com
 > 4. PowerShell スクリプトの実行（導入時のみ・社内ポリシーの範囲で）
 >
 > 導入手順の詳細は必要に応じて共有いたします。ご検討よろしくお願いいたします。
