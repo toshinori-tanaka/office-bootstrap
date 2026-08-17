@@ -128,6 +128,8 @@ if [ ! -d "$HOME/.claude-brain/.git" ]; then
     printf "  招待の Accept 後に Enter: "; read -r _
   done
 fi
+# 再実行時は頭脳を最新化してから走る（配信済みの修正を確実に反映・ff のみ＝安全）
+git -C "$HOME/.claude-brain" pull --ff-only -q 2>/dev/null || true
 exec bash "$HOME/.claude-brain/wizard-setup.sh"
 '@
   $repoPath = $BrainRepo -replace "https://github.com/", "" -replace "\.git$", ""
