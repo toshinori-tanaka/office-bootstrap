@@ -53,12 +53,18 @@ if ($free -ge 10) { Info "✓ 空き容量 OK (${free}GB)" }
 else { $ok = $false; Ng "C ドライブの空きが不足 (${free}GB)" "10GB 以上空けてから再実行してください" }
 
 foreach ($h in @("github.com", "claude.ai")) {
+  $reachable = $false
   try {
     $null = Invoke-WebRequest -Uri "https://$h" -Method Head -TimeoutSec 10 -UseBasicParsing
-    Info "✓ 接続 OK: $h"
+    $reachable = $true
   } catch {
-    $ok = $false; Ng "接続できません: $h" "ネット接続を確認。会社ネットワークの場合は IT 部門へ（同梱の依頼ひな型を利用）"
+    # サーバーが HTTP 応答（403 等）を返した＝ネットワークは到達できている → 合格。
+    # claude.ai は自動アクセス対策で HEAD に 403 を返すことがある（2026-08-17 実機で実証）。
+    # 到達失敗（DNS 不可・タイムアウト・接続拒否）のときだけ Response が null になる
+    if ($null -ne $_.Exception.Response) { $reachable = $true }
   }
+  if ($reachable) { Info "✓ 接続 OK: $h" }
+  else { $ok = $false; Ng "接続できません: $h" "ネット接続を確認。会社ネットワークの場合は IT 部門へ（同梱の依頼ひな型を利用）" }
 }
 if (-not $ok) { Say "✗ 要件を満たしていません。上の対処を行ってから、もう一度実行してください。"; Read-Host "Enter で終了"; exit 1 }
 Info "✓ P1 すべて合格"
