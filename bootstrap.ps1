@@ -108,11 +108,19 @@ if (-not (Done "P3")) {
   Say "P3. Ubuntu 内のセットアップを開始します（ここからは開く画面の日本語案内に従ってください）"
   $stage1 = @'
 set -u
-sudo apt-get update -qq && sudo apt-get install -y -qq gh git curl >/dev/null
+echo "== 道具一式を導入します（数分かかることがあります） =="
+until sudo apt-get update -qq && sudo apt-get install -y -qq gh git curl >/dev/null; do
+  echo ""
+  echo "✗ 道具の導入に失敗しました。上に出ている英語のエラーが原因です（パスワード誤り・ネット不通など）"
+  echo "  対処してから Enter で再試行してください（中断は Ctrl+C。1 行コマンドの再実行で続きから再開できます）"
+  read -r _
+done
+# gh 不在のまま下の接続ループへ進むと無限ループになる（2026-08-17 実機事故）。ここで必ず止める
+command -v gh >/dev/null 2>&1 || { echo "✗ GitHub 接続ツール（gh）が導入できていません。オーナーへ連絡してください"; exit 1; }
 until gh auth status >/dev/null 2>&1; do
   echo ""; echo "== GitHub に接続します（8 桁コードをブラウザに入力） =="
   echo "   アカウントが無い場合は先に https://github.com で無料作成を"
-  gh auth login --web --git-protocol https || true
+  gh auth login --web --git-protocol https || sleep 2
 done
 if [ ! -d "$HOME/.claude-brain/.git" ]; then
   echo "== 組織の頭脳を受信します（権限が無い場合はアカウント名をオーナーへ伝えて招待後に再実行） =="
