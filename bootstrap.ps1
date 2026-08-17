@@ -25,6 +25,15 @@ function Ng([string]$m, [string]$fix) {
 function Mark([string]$s) { if (-not (Test-Path $StateFile) -or -not (Select-String -Quiet -Pattern "^$s$" -Path $StateFile)) { Add-Content $StateFile $s } }
 function Done([string]$s) { (Test-Path $StateFile) -and (Select-String -Quiet -Pattern "^$s$" -Path $StateFile) }
 
+# どんな予期しないエラーでも「表示して止まる」（黙って窓が閉じるのは禁止・2026-08-17 実機事故）
+trap {
+  Say "✗ 予期しないエラーで停止しました:"
+  Info ("" + $_.Exception.Message)
+  Info "この画面を撮影してオーナーへ連絡してください。もう一度実行すると続きから再開します"
+  Read-Host "Enter で終了"
+  exit 1
+}
+
 Say "◯◯-Office 導入ウィザード（Windows 側）へようこそ"
 Info "途中で止まっても、もう一度このファイルを実行すれば続きから再開します。"
 
@@ -153,8 +162,10 @@ function Register-OfficeTask([string]$name, [string]$cmd, $trigger) {
   Info "✓ $name"
 }
 # 同期は「1 時間毎＋ログオン時」の 2 トリガを持つ 1 タスク（Plan 正本どおり 5 タスク構成・停止も 1 操作）
+# RepetitionDuration は指定しない＝無期限反復（[TimeSpan]::MaxValue は実機の Windows で
+# タスク登録が「値が範囲外」エラーになる既知非互換・2026-08-17 実機で発覚）
 $syncTrig = @(
-  (New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Hours 1) -RepetitionDuration ([TimeSpan]::MaxValue)),
+  (New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Hours 1)),
   (New-ScheduledTaskTrigger -AtLogOn)
 )
 Register-OfficeTask "Office-Sync"    "bash ~/.claude-brain/office-sync.sh"              $syncTrig
