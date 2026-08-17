@@ -26,7 +26,7 @@
 2. 下の枠の右上にあるコピーボタンで **1 行まるごとコピー** → ターミナルに**貼り付けて Enter**
 
 ```powershell
-irm https://raw.githubusercontent.com/toshinori-tanaka/office-bootstrap/main/bootstrap.ps1 -OutFile "$env:USERPROFILE\office-setup.ps1"; powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\office-setup.ps1"
+iwr -UseBasicParsing https://raw.githubusercontent.com/toshinori-tanaka/office-bootstrap/main/bootstrap.ps1 -OutFile "$env:USERPROFILE\office-setup.ps1"; powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\office-setup.ps1"
 ```
 
 3. あとは**画面の日本語案内に従うだけ**です。「ユーザーアカウント制御」の確認が出たら「**はい**」を押してください。
