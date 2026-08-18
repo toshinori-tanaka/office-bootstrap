@@ -161,11 +161,12 @@ function Register-OfficeTask([string]$name, [string]$cmd, $trigger) {
   Register-ScheduledTask -TaskName $name -Action $action -Trigger $trigger -Settings $settings -Force | Out-Null
   Info "✓ $name"
 }
-# 同期は「1 時間毎＋ログオン時」の 2 トリガを持つ 1 タスク（Plan 正本どおり 5 タスク構成・停止も 1 操作）
+# 同期は「15 分毎＋ログオン時」の 2 トリガを持つ 1 タスク（5 タスク構成・停止も 1 操作。
+# 15 分化は 2026-08-18 オーナー決定＝バックアップ粒度と設定収束の即応性向上・AI/GitHub 消費への影響なし）
 # RepetitionDuration は指定しない＝無期限反復（[TimeSpan]::MaxValue は実機の Windows で
 # タスク登録が「値が範囲外」エラーになる既知非互換・2026-08-17 実機で発覚）
 $syncTrig = @(
-  (New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Hours 1)),
+  (New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 15)),
   (New-ScheduledTaskTrigger -AtLogOn)
 )
 Register-OfficeTask "Office-Sync"    "bash ~/.claude-brain/office-sync.sh"              $syncTrig

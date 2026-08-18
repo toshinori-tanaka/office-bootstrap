@@ -69,7 +69,7 @@ iwr -UseBasicParsing https://raw.githubusercontent.com/toshinori-tanaka/office-b
 - **調子が悪い時**: ターミナルで `office-doctor`（健康診断・何も壊しません）
 - **終わり方**: `/exit` と打つ、またはウィンドウを閉じる
 
-あなたの記録・記憶は**毎時間、あなた専用の非公開 GitHub に自動バックアップ**されます（操作不要・PC が壊れても消えません）。
+あなたの記録・記憶は**15 分ごとに、あなた専用の非公開 GitHub に自動バックアップ**されます（操作不要・PC が壊れても消えません）。
 
 ---
 
