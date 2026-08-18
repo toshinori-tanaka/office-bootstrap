@@ -154,26 +154,13 @@ exec bash "$HOME/.claude-brain/wizard-setup.sh"
 Info "✓ P3 Ubuntu 内セットアップ完了"
 
 # ---- P4: 定時ジョブの登録（PC 起動中に自動で回る仕組み） ----------------------
+# 定義の単一ソースは頭脳側 office-tasks-converge.sh（間隔・時刻の変更は配信だけで
+# 既存機にも自動反映される・2026-08-18）。ここは収束の実行と結果確認のみを行う。
+# 通常はウィザード S9b で登録済み＝ここは照合のみで即完了（再実行の取り残し保険）
 Say "P4. 自動ジョブを登録します（同期・記憶・教訓の 5 本）"
-$settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -DontStopOnIdleEnd -ExecutionTimeLimit (New-TimeSpan -Hours 2)
-function Register-OfficeTask([string]$name, [string]$cmd, $trigger) {
-  $action = New-ScheduledTaskAction -Execute "wsl.exe" -Argument "-d $Distro -u $wu -- bash -lc `"$cmd`""
-  Register-ScheduledTask -TaskName $name -Action $action -Trigger $trigger -Settings $settings -Force | Out-Null
-  Info "✓ $name"
-}
-# 同期は「15 分毎＋ログオン時」の 2 トリガを持つ 1 タスク（5 タスク構成・停止も 1 操作。
-# 15 分化は 2026-08-18 オーナー決定＝バックアップ粒度と設定収束の即応性向上・AI/GitHub 消費への影響なし）
-# RepetitionDuration は指定しない＝無期限反復（[TimeSpan]::MaxValue は実機の Windows で
-# タスク登録が「値が範囲外」エラーになる既知非互換・2026-08-17 実機で発覚）
-$syncTrig = @(
-  (New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 15)),
-  (New-ScheduledTaskTrigger -AtLogOn)
-)
-Register-OfficeTask "Office-Sync"    "bash ~/.claude-brain/office-sync.sh"              $syncTrig
-Register-OfficeTask "Office-R0"      "bash ~/.claude-brain/transcript-archive-auto.sh"  (New-ScheduledTaskTrigger -Daily -At 09:45)
-Register-OfficeTask "Office-R1"      "bash ~/.claude-brain/transcript-extract-auto.sh"  (New-ScheduledTaskTrigger -Daily -At 11:00)
-Register-OfficeTask "Office-R2"      "bash ~/.claude-brain/transcript-reconcile-auto.sh" (New-ScheduledTaskTrigger -Daily -At 11:30)
-Register-OfficeTask "Office-Lessons" "bash ~/.claude-brain/lesson-distill-auto.sh"      (New-ScheduledTaskTrigger -Daily -At 12:00)
+wsl.exe -d $Distro -u $wu -- bash -lc "bash ~/.claude-brain/office-tasks-converge.sh"
+if ($LASTEXITCODE -ne 0) { Ng "自動ジョブの登録に失敗しました" "もう一度このファイルを実行してください"; Read-Host "Enter で終了"; exit 1 }
+Info "✓ 自動ジョブ 5 本を確認しました"
 
 # ---- P5: デスクトップの起動ショートカット ------------------------------------
 Say "P5. デスクトップに起動ショートカットを作ります"
