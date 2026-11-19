@@ -168,8 +168,22 @@ $oname = (wsl.exe -d $Distro -u $wu -e cat /home/$wu/.claude/office-name 2>$null
 if (-not $oname) { $oname = "Office" }
 $ws2 = New-Object -ComObject WScript.Shell
 $sc = $ws2.CreateShortcut((Join-Path $ws2.SpecialFolders("Desktop") "$oname-Office.lnk"))
-$sc.TargetPath = "wsl.exe"
-$sc.Arguments  = "-d $Distro -u $wu -- bash -lic office"
+# Windows Terminal exists -> launch through it so Shift+Enter inserts a newline.
+# Leaving the host to the system default can pick the legacy console, which cannot
+# distinguish Shift+Enter from Enter (2026-09-04, reported from a staff PC).
+$wtExe = Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps\wt.exe"
+if (Test-Path $wtExe) {
+  $sc.TargetPath = $wtExe
+  $sc.Arguments  = "wsl.exe -d $Distro -u $wu -- bash -lic office"
+} else {
+  $sc.TargetPath = "wsl.exe"
+  $sc.Arguments  = "-d $Distro -u $wu -- bash -lic office"
+}
+# The wt.exe above is an app execution alias with no icon of its own, so without an explicit icon
+# the shortcut shows a blank page. Use the WSL penguin (the launcher's icon before 2026-09-04).
+# Same rule as office-launcher-converge.sh, which restores it on machines installed earlier.
+$wslIco = Join-Path $env:SystemRoot "System32\wsl.exe"
+if (Test-Path $wslIco) { $sc.IconLocation = "$wslIco,0" }
 $sc.Description = "秘書を起動（$oname-Office）"
 $sc.Save()
 Remove-Item (Join-Path $ws2.SpecialFolders("Desktop") "セットアップを再開.lnk") -ErrorAction SilentlyContinue
