@@ -15,8 +15,8 @@
 2. **GitHub アカウント（無料）** — お持ちでなければ:
    1. ブラウザで https://github.com を開く → 右上「Sign up」
    2. メールアドレス・パスワード・アカウント名（半角英数字・例 `suzuki-taro`）を登録
-   3. **アカウント名をオーナー（管理者）へ伝えてください**
-3. **オーナーからの招待** — 伝えたアカウント名宛に GitHub から招待メールが届きます（通常 2 通）。
+   3. **アカウント名を管理者へ伝えてください**
+3. **管理者からの招待** — 伝えたアカウント名宛に GitHub から招待メールが届きます（通常 2 通）。
    **どれも本文の「Accept invitation」（緑のボタン）を押してください**。
    （会社共通の設定を受け取るため／あなたの気づきを送る置き場のため。届いた分をすべて承諾すれば OK）
 
@@ -32,7 +32,7 @@
 **手順 2.** 下の枠をコピーして、ターミナルに貼り付けて `Enter`
 
 ```powershell
-iwr -UseBasicParsing https://raw.githubusercontent.com/toshinori-tanaka/office-bootstrap/main/bootstrap.ps1 -OutFile "$env:USERPROFILE\office-setup.ps1"; powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\office-setup.ps1"
+iwr -UseBasicParsing https://raw.githubusercontent.com/Toshi-GA01/office-bootstrap/main/bootstrap.ps1 -OutFile "$env:USERPROFILE\office-setup.ps1"; powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\office-setup.ps1"
 ```
 
 **手順 3.** あとは**画面の日本語案内に従うだけ**です。「ユーザーアカウント制御」の確認が出たら「**はい**」を押してください。
@@ -46,10 +46,10 @@ iwr -UseBasicParsing https://raw.githubusercontent.com/toshinori-tanaka/office-b
 |---|---|
 | PC の再起動 | `Enter` を押すと再起動 → **再開は自動**（始まらなければデスクトップの「セットアップを再開」をダブルクリック） |
 | Ubuntu の初期設定 | 好きなユーザー名（半角英小文字）とパスワードを決めて入力（この PC 内だけで使うもの） |
-| 組織名 | 「◯◯-Office」の◯◯部分（半角英数字・例 `Suzuki`） |
-| Claude ログイン | ブラウザが開くので、会社から案内された Claude アカウントでログイン → ターミナルに戻り `/exit` |
 | GitHub 接続 | 画面に出る **8 桁コード**を、開いたブラウザに入力 |
+| 組織名 | 「◯◯-Office」の◯◯部分（半角英数字・例 `Suzuki`） |
 | 拡張機能を使うか | 使う場合は `y`、使わない場合は `n`（1 回だけ・後から変えられます） |
+| Claude ログイン | ブラウザが開くので、会社から案内された Claude アカウントでログイン → ターミナルに戻り `/exit` |
 
 途中で **PC のパスワード**を聞かれることがあります（道具の導入と、下記の会社共通設定の書き込みに必要）。
 画面には毎回「何のために必要か」が先に表示されます。
@@ -151,7 +151,7 @@ office-update
 
 **会社 PC で権限やネットワークに阻まれる** → 下のひな型を IT 部門へ
 
-**どうしても解決しない** → 画面を撮影して、システム管理者（オーナー）へ連絡してください
+**どうしても解決しない** → 画面を撮影して、管理者へ連絡してください。文章で説明する必要はありません
 
 ---
 
